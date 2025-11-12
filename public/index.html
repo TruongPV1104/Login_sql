@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>LOGIN FORM</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>HELLO</h1>
+        <div id="loginForm">
+            <h2>LOGIN</h2>
+            <div>
+                <input type="text" placeholder="Ten tai khoan" id="logUser" class="input_value">
+            </div>
+            <div>
+                <input type="password" placeholder="Mat khau" id="logPass" class="input_value">
+            </div>
+            <div>
+                <button id="loginBtn" onclick="loginUser()">LOGIN</button>
+            </div>
+            <div>
+                <p><a href="#" onclick="showRegister()">Chua co tai khoan? Dang ky ngay!</a></p>
+            </div>
+        </div>
+        <div id="registerForm" class="hidden">
+            <h2>REGISTER</h2>
+            <div>
+                <input type="text" placeholder="Ten dang nhap" id="regUser" class="input_value">
+            </div>
+            <div>
+                <input type="password" placeholder="Mat khau" id="regPass" class="input_value">
+            </div>
+            <div>
+                <input type="password" placeholder="Nhap lai mat khau" id="regCfmPass" class="input_value">
+            </div>
+            <div>
+                <button id="regBtn" onclick="registerUser()">SUBMIT</button>
+            </div>
+            <div>
+                <p><a href="#" onclick="showLogin()">Da co tai khoan? Dang nhap!</a></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        window.accessToken = null
+
+        const loginBtn = document.getElementById('loginBtn')
+        const regBtn = document.getElementById('regBtn')
+
+        //Hien thi form dang ky
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden')
+            document.getElementById('registerForm').classList.remove('hidden')
+
+        }
+        //Hien thi form dang nhap
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden')
+            document.getElementById('registerForm').classList.add('hidden')
+        }
+
+        //Dang ky
+        async function registerUser() {
+            const username = document.getElementById('regUser').value.trim()
+            const password = document.getElementById('regPass').value.trim()
+            const cfmPassword = document.getElementById('regCfmPass').value.trim()
+
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username, password, cfmPassword
+                })
+            })
+            const data = await res.json()
+            alert(data.message)
+
+        }
+
+        //Dang nhap
+        async function loginUser() {
+            const username = document.getElementById('logUser').value.trim()
+            const password = document.getElementById('logPass').value.trim()
+
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: "include",
+                body: JSON.stringify({
+                    username, password
+                }),
+            })
+            const data = await res.json()
+            if (res.ok) {
+                accessToken = data.token;
+                alert(data.message)
+                window.accessToken = accessToken;
+                window.location.href = 'secret.html';
+            }
+        }
+    </script>
+</body>
+
+</html>
